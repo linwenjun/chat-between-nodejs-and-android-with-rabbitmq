@@ -4,6 +4,13 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.rabbitmq.client.Channel;
@@ -12,26 +19,48 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class MainActivity extends Activity {
 
     private static final String QUEUE_NAME = "hello";
-    TextView textView;
+
+    ListView chatListView;
+    Button fetchButton;
+
+    ArrayList<String> chatList;
+    ChatViewAdapter adapter;
+    int count = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textView = (TextView) findViewById(R.id.chat_text);
+
+
+        adapter = new ChatViewAdapter();
+
+        chatList = new ArrayList<>();
+        chatList.add("abc1");
+
+
+        chatListView = (ListView) findViewById(R.id.chat_list);
+        fetchButton = (Button) findViewById(R.id.fetch_button);
+
+        chatListView.setAdapter(adapter);
 
         final Handler handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 Bundle bundle = msg.getData();
                 String chatMsg = bundle.getString("chat");
-                textView.setText(chatMsg);
+                chatList.add(chatMsg);
+                adapter.notifyDataSetChanged();
+                Log.i("Receive from server", chatMsg);
             }
         };
+
 
         new Thread(new Runnable() {
 
@@ -55,6 +84,7 @@ public class MainActivity extends Activity {
                         Bundle bundle = new Bundle();
                         bundle.putString("chat", message);
                         msg.setData(bundle);
+
                         handler.sendMessage(msg);
                     }
                 } catch (IOException e) {
@@ -64,9 +94,35 @@ public class MainActivity extends Activity {
                 }
             }
         }).start();
+    }
 
+    class ChatViewAdapter extends BaseAdapter {
 
+        @Override
+        public int getCount() {
+            return chatList.size();
+        }
 
+        @Override
+        public Object getItem(int i) {
+            return chatList.get(i);
+        }
 
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            if(null == view) {
+                view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.layout_chat, null);
+            }
+
+            TextView chatContent = (TextView)view.findViewById(R.id.chat_text);
+            chatContent.setText(chatList.get(i));
+
+            return view;
+        }
     }
 }
