@@ -16,12 +16,4 @@
 
     </ListView>
 
-    <Button
-        android:id="@+id/fetch_button"
-        android:text="@string/fetch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-
-
 </LinearLayout>

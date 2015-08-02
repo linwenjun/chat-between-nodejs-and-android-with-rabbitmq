@@ -46,7 +46,6 @@ public class MainActivity extends Activity {
 
 
         chatListView = (ListView) findViewById(R.id.chat_list);
-        fetchButton = (Button) findViewById(R.id.fetch_button);
 
         chatListView.setAdapter(adapter);
 
@@ -119,8 +118,18 @@ public class MainActivity extends Activity {
                 view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.layout_chat, null);
             }
 
-            TextView chatContent = (TextView)view.findViewById(R.id.chat_text);
-            chatContent.setText(chatList.get(i));
+            TextView rightChat = (TextView)view.findViewById(R.id.chat_text_right);
+            TextView leftChat = (TextView) view.findViewById(R.id.chat_text_left);
+            if(i % 2 == 0) {
+                rightChat.setText(chatList.get(i));
+                rightChat.setVisibility(View.VISIBLE);
+                leftChat.setVisibility(View.GONE);
+            } else {
+                leftChat.setText(chatList.get(i));
+                leftChat.setVisibility(View.VISIBLE);
+                rightChat.setVisibility(View.GONE);
+            }
+
 
             return view;
         }
