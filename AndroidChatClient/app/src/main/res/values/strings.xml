@@ -3,4 +3,5 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="dummy_str">In android studio,you can edit 9 patches directly from with the IDE. But is it also possible to convert an png image to 9-patch using the IDE? (similar to the android 9-patch tool provided by the SDK).</string>
 </resources>
